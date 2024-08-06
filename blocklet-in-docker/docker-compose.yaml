@@ -1,0 +1,17 @@
+services:
+  blocklet-server:
+    container_name: blocklet-server-docker
+    image: arcblock/blocklet-server-dev
+    ports:
+      - 5176:5176
+    volumes:
+      - ./data:/data # 你需要将 blocklet-server 的数据存放在哪儿
+      - ./code:/workspace/app # 你需要开发的 blocklet 目录
+      - node_modules:/workspace/app/node_modules
+      # - pnpm-store: /workspace/app/.pnpm-store # 如果你使用的是 pnpm 来管理依赖，则需要加上这个
+    environment:
+      ABT_NODE_HOST: 172.26.192.1 # 填你主机的 IP
+
+volumes:
+  node_modules:
+  pnpm-store: # 如果你使用的是 pnpm 来管理依赖，则需要加上这个
