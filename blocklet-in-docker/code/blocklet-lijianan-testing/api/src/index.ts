@@ -1,13 +1,11 @@
 import 'express-async-errors';
-
 import path from 'path';
-
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv-flow';
-import express, { ErrorRequestHandler } from 'express';
+import express from 'express';
+import type { ErrorRequestHandler } from 'express';
 import fallback from '@blocklet/sdk/lib/middlewares/fallback';
-
 import logger from './libs/logger';
 import routes from './routes';
 
@@ -44,7 +42,9 @@ if (isProduction) {
 
 const port = parseInt(process.env.BLOCKLET_PORT!, 10);
 
-export const server = app.listen(port, (err?: any) => {
-  if (err) throw err;
+export const server = app.listen(port, (err?: Error) => {
+  if (err) {
+    throw err;
+  }
   logger.info(`> ${name} v${version} ready on ${port}`);
 });

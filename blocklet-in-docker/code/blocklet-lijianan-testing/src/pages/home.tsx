@@ -24,14 +24,14 @@ function Home() {
     mutationKey: ['modifyInfo'],
     mutationFn: UserServer.modifyInfo,
     onSuccess: () => {
-      setMode(Mode.View);
       message.success('保存成功');
+      setMode(Mode.View);
     },
     onError: (err) => {
-      setMode(Mode.View);
       if (err instanceof Error) {
         message.warning(`保存失败：${err.message}`);
       }
+      setMode(Mode.View);
     },
   });
 
@@ -54,6 +54,7 @@ function Home() {
             className={clsx(styles.input, mode === Mode.View && styles.readOnly)}
             readOnly={mode === Mode.View}
             allowClear
+            defaultValue="栗嘉男"
             placeholder="请输入用户名"
             value={userInfo?.data.name}
           />
@@ -66,6 +67,7 @@ function Home() {
             className={clsx(styles.input, mode === Mode.View && styles.readOnly)}
             readOnly={mode === Mode.View}
             allowClear
+            defaultValue="19941208872"
             placeholder="请输入电话"
             value={userInfo?.data.name}
           />
@@ -78,6 +80,7 @@ function Home() {
             className={clsx(styles.input, mode === Mode.View && styles.readOnly)}
             readOnly={mode === Mode.View}
             allowClear
+            defaultValue="574980606@qq.com"
             placeholder="请输入邮箱"
             value={userInfo?.data.name}
           />
@@ -101,7 +104,12 @@ function Home() {
               保存
             </Button>
           )}
-          <Button className={styles.linkBtn} type="default" icon={<GithubOutlined />}>
+          <Button
+            className={styles.linkBtn}
+            type="default"
+            icon={<GithubOutlined />}
+            target="_blank"
+            href="https://github.com/li-jia-nan/Arcblock-Testing">
             GitHub
           </Button>
         </div>
