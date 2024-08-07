@@ -7,21 +7,16 @@ export interface User {
 }
 
 class UserServer {
-  private static prefix = '/api';
+  // private static prefix = '/api';
 
   static getInfo() {
-    return api.request({
-      method: 'GET',
-      url: `${this.prefix}/data`,
-    });
+    // return api.get(`${this.prefix}/data`);
+    return api.get('/api/data');
   }
 
   static modifyInfo(user: Partial<User>) {
-    return api.request({
-      method: 'POST',
-      url: `${this.prefix}/data`,
-      data: user,
-    });
+    // return api.patch(`${this.prefix}/data`, user);
+    return api.patch('/api/modify', user);
   }
 }
 

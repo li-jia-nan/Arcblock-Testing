@@ -1,35 +1,44 @@
 import middleware from '@blocklet/sdk/lib/middlewares';
 import { Router } from 'express';
+import fs from 'fs';
+import path from 'path';
+import { deserializer, serializer } from '../utils';
 
 const router = Router();
 
-// 模拟用户数据
-const user = {
-  username: 'john_doe',
-  phone: '123-456-7890',
-  email: 'john.doe@example.com',
-};
+const paths = ['./', 'mock-db.json'];
 
-router.use('/user', middleware.user(), (req, res) => {
-  return res.json(req.user || {});
+router.use('/user', middleware.user(), (req, res) => res.json(req.user || {}));
+
+interface User {
+  name: string;
+  phone: number;
+  email: string;
+}
+
+router.use('/data', (_, res) => {
+  try {
+    // 这里用 readFile 模拟 SQL 查询数据库
+    const content = deserializer<User>(fs.readFileSync(path.join(__dirname, ...paths), 'utf8'));
+    return res.json({ success: true, data: content });
+  } catch (err) {
+    return res.json({ success: false, message: `获取失败：${err.message}` });
+  }
 });
 
-router.get('/user', (_, res) => {
-  return res.json(user);
-});
-
-router.post('/user', (req, res) => {
-  const { username, phone, email } = req.body;
-  if (username) {
-    user.username = username;
+router.patch('/modify', (req, res) => {
+  try {
+    // 这里用 readFile 模拟 SQL 查询数据库
+    const content = deserializer<User>(fs.readFileSync(path.join(__dirname, ...paths), 'utf8'));
+    const newUser: User = {
+      ...content,
+      ...req.body,
+    };
+    fs.writeFileSync(path.join(__dirname, ...paths), serializer<User>(newUser));
+    return res.json({ success: true, message: '修改成功', data: newUser });
+  } catch (err) {
+    return res.json({ success: false, message: `修改失败：${err.message}`, data: null });
   }
-  if (phone) {
-    user.phone = phone;
-  }
-  if (email) {
-    user.email = email;
-  }
-  return res.json(user);
 });
 
 export default router;

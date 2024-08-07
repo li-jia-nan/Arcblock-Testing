@@ -15,12 +15,12 @@ enum Mode {
 function Home() {
   const [mode, setMode] = React.useState<Mode>(Mode.View);
 
-  const { data: userInfo } = useQuery({
+  const { data: userInfo, isLoading } = useQuery({
     queryKey: ['getInfo'],
     queryFn: UserServer.getInfo,
   });
 
-  const { mutate: modifyInfo } = useMutation({
+  const { mutate: modifyInfo, isPending } = useMutation({
     mutationKey: ['modifyInfo'],
     mutationFn: UserServer.modifyInfo,
     onSuccess: () => {
@@ -35,7 +35,11 @@ function Home() {
     },
   });
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<User>();
+
+  React.useEffect(() => {
+    form.setFieldsValue(userInfo?.data?.data);
+  }, [form, userInfo]);
 
   return (
     <div className={styles.card}>
@@ -51,12 +55,11 @@ function Home() {
           name="name"
           label={<span>用户名</span>}>
           <Input
+            disabled={isLoading}
             className={clsx(styles.input, mode === Mode.View && styles.readOnly)}
             readOnly={mode === Mode.View}
             allowClear
-            defaultValue="栗嘉男"
             placeholder="请输入用户名"
-            value={userInfo?.data.name}
           />
         </Form.Item>
         <Form.Item<User>
@@ -64,12 +67,11 @@ function Home() {
           name="phone"
           label={<span>电话</span>}>
           <Input
+            disabled={isLoading}
             className={clsx(styles.input, mode === Mode.View && styles.readOnly)}
             readOnly={mode === Mode.View}
             allowClear
-            defaultValue="19941208872"
             placeholder="请输入电话"
-            value={userInfo?.data.name}
           />
         </Form.Item>
         <Form.Item<User>
@@ -77,12 +79,11 @@ function Home() {
           name="email"
           label={<span>邮箱</span>}>
           <Input
+            disabled={isLoading}
             className={clsx(styles.input, mode === Mode.View && styles.readOnly)}
             readOnly={mode === Mode.View}
             allowClear
-            defaultValue="574980606@qq.com"
             placeholder="请输入邮箱"
-            value={userInfo?.data.name}
           />
         </Form.Item>
         <div className={styles.btnGroup}>
@@ -97,6 +98,7 @@ function Home() {
           )}
           {mode === Mode.Edit && (
             <Button
+              disabled={isPending}
               className={styles.saveBtn}
               type="primary"
               icon={<SaveOutlined />}
@@ -106,7 +108,6 @@ function Home() {
           )}
           <Button
             className={styles.linkBtn}
-            type="default"
             icon={<GithubOutlined />}
             target="_blank"
             href="https://github.com/li-jia-nan/Arcblock-Testing">
